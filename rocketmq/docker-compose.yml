@@ -1,0 +1,53 @@
+# 版本号
+version: '3.7'
+# 容器在启动的时候，如果没有指定网络，会自动创建一个名为 APP_default 的网络，这个网络是隔离的，不会和其他的网络进行连接
+# 一个容器可以可以连接多个网络
+# 容器间的访问使用 CONTAINER_NAME:COTAINER_PORT
+services:
+    namesrv:
+        image: apache/rocketmq:5.1.0
+        container_name: rmqnamesrv
+        ports:
+            - 9876:9876
+        volumes:
+            - ./namesrv/logs:/home/rocketmq/logs
+        command: sh mqnamesrv
+        networks:
+            - rocketmq
+    broker:
+        image: apache/rocketmq:5.1.0
+        container_name: rmqbroker
+        ports:
+            - 10909:10909
+            - 10911:10911
+            - 10912:10912
+        volumes:
+            - ./broker/logs:/home/rocketmq/logs
+            - ./broker/store:/home/rocketmq/store
+            - ./broker/conf/broker.conf:/home/conf/broker.conf
+        environment:
+            - NAMESRV_ADDR=namesrv:9876
+        command: sh mqbroker -c /home/conf/broker.conf
+        depends_on:
+            - namesrv
+        networks:
+            - rocketmq
+    dashboard:
+        image: apacherocketmq/rocketmq-dashboard:latest
+        container_name: rmqdashboard
+        ports:
+            - 13141:8080
+        environment:
+            - NAMESRV_ADDR=namesrv:9876
+            # - JAVA_OPTS="-Drocketmq.namesrv.addr=namesrv:9876"
+        # 依赖与 namesrv 容器启动，决定容器的启动顺序
+        depends_on:
+            - namesrv
+        # 加入到 rocketmq 网络中
+        networks:
+            - rocketmq
+# https://docs.docker.com/compose/networking/
+networks:
+    rocketmq:
+        # 表示这个网络事已经存在的，不需要docker-compose自动创建
+        external: true

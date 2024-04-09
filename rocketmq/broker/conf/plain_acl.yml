@@ -1,0 +1,14 @@
+globalWhiteRemoteAdresses:
+    - 127.0.0.*
+accounts:
+    - accessKey: xxx
+      secretKey: xxx
+      whiteRemoteAdresses:
+          - 127.0.0.*
+      admin: true
+      defaultTopicPerm: DENY
+      defaultGroupPerm: SUB
+      topicPerms:
+          - xxxTopic=PUB|SUB
+      groupPerms:
+          - xxxGroup=PUB|SUB
