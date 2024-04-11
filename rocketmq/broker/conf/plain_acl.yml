@@ -1,13 +1,22 @@
+# 默认加载 conf 下的该文件
+# 
+# 全局白名单
 globalWhiteRemoteAdresses:
     - 127.0.0.*
 accounts:
     - accessKey: xxx
       secretKey: xxx
+    #   白名单权限最高
       whiteRemoteAdresses:
           - 127.0.0.*
+    # 是否是管理员角色，是就不需要继续资源检验  
       admin: true
+    #   DENY（拒接）、ANY（所有）、PUB（发布）、SUB（订阅）
+    # 默认的主题权限
       defaultTopicPerm: DENY
+    #   默认的组权限
       defaultGroupPerm: SUB
+    #   具体的 topic 权限
       topicPerms:
           - xxxTopic=PUB|SUB
       groupPerms:
